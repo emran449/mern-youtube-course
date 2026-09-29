@@ -25,6 +25,11 @@ function AuthRegister() {
         toast.add({
   title: data?.payload?.message || "Registration successful",
 })
+      } else {
+        toast.add({
+  title: data?.payload?.message || "Registration failed. Please try another email.",
+  variant: "destructive",
+})
       }
     })
   }
