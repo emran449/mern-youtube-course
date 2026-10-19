@@ -71,11 +71,34 @@ const loginUser = async (req, res) => {
 
 // logout user
 
+const logoutUser = (req, res) => {
+  res.clearCookie("token").status(200).json({
+    success: true,
+    message: "Logout successful",
+  });
+};
+
 // auth middleware
 
+const authMiddleware = (req, res, next) => {
+  const token = req.cookies.token;
 
+  if (!token) {
+    return res.status(401).json({ success: false, message: "Access denied. No token provided." });
+  }
+
+  try {
+    const decoded = jwt.verify(token, 'CLIENT_SECRET_KEY');
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(401).json({ success: false, message: "Invalid token." });
+  }
+};
 
 module.exports = {
   registerUser,
   loginUser,
+  logoutUser,
+  authMiddleware,
 };
