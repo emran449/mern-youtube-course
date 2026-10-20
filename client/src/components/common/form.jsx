@@ -4,7 +4,7 @@ import { Label } from "../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 
-const CommonForm = ({ formControls ,formData, setFormData,onSubmit, buttonText }) => {
+const CommonForm = ({ formControls ,formData, setFormData,onSubmit, buttonText, isBtnDisabled }) => {
 
     function renderInputsByComponentType(getControlItem) {
         // eslint-disable-next-line no-useless-assignment
@@ -79,7 +79,7 @@ const CommonForm = ({ formControls ,formData, setFormData,onSubmit, buttonText }
           </div>
         ))}
       </div>
-      <Button type="submit" className="w-full mt-2">{buttonText || "Submit"}</Button>
+      <Button disabled={isBtnDisabled} type="submit" className="w-full mt-2">{buttonText || "Submit"}</Button>
     </form>
   );
 };

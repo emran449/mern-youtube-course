@@ -10,7 +10,12 @@ import {
 } from "@/components/ui/sheet";
 import { toast } from "@/components/ui/toast";
 import { addProductFormElements } from "@/config";
-import { addNewProduct, editProduct, fetchAllProducts } from "@/store/admin/products-slice";
+import {
+  addNewProduct,
+  deleteProduct,
+  editProduct,
+  fetchAllProducts,
+} from "@/store/admin/products-slice";
 import "react";
 import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -43,7 +48,10 @@ function AdminProducts() {
       ? dispatch(
           editProduct({
             id: currentEditedId,
-            formData: { ...formData, image: uploadedImageUrl || formData.image },
+            formData: {
+              ...formData,
+              image: uploadedImageUrl || formData.image,
+            },
           }),
         ).then((data) => {
           console.log(data);
@@ -57,25 +65,38 @@ function AdminProducts() {
             toast.add({ title: "Product updated successfully" });
           }
         })
-      :
-    dispatch(
-      addNewProduct({
-        ...formData,
-        image: uploadedImageUrl,
-      }),
-    ).then((data) => {
-      console.log(data);
+      : dispatch(
+          addNewProduct({
+            ...formData,
+            image: uploadedImageUrl,
+          }),
+        ).then((data) => {
+          console.log(data);
+          if (data?.payload?.success) {
+            dispatch(fetchAllProducts());
+            setOpenCreateProductSheet(false);
+            setImageFile(null);
+            setUploadedImageUrl("");
+            setFormData(initialFormData);
+            toast.add({
+              title: "Product add successfully",
+            });
+          }
+        });
+  }
+
+  function handleDelete(getCurrentProductId) {
+    dispatch(deleteProduct(getCurrentProductId)).then(data=> {
       if (data?.payload?.success) {
         dispatch(fetchAllProducts());
-        setOpenCreateProductSheet(false);
-        setImageFile(null);
-        setUploadedImageUrl("");
-        setFormData(initialFormData);
-        toast.add({
-          title: "Product add successfully",
-        });
       }
-    });
+    })
+  }
+
+  function isFormValid() {
+    return Object.keys(formData)
+      .map((key) => formData[key] !== "")
+      .every((item) => item);
   }
 
   useEffect(() => {
@@ -98,6 +119,7 @@ function AdminProducts() {
                 setOpenCreateProductSheet={setOpenCreateProductSheet}
                 setCurrentEditedId={setCurrentEditedId}
                 product={productItem}
+                handleDelete={handleDelete}
               ></AdminProductTile>
             ))
           : null}
@@ -113,7 +135,7 @@ function AdminProducts() {
         <SheetContent side="right" className="overflow-auto p-2">
           <SheetHeader>
             <SheetTitle>
-              {currentEditedId !== null ? 'Edit Product' : 'Add New Product'}
+              {currentEditedId !== null ? "Edit Product" : "Add New Product"}
             </SheetTitle>
           </SheetHeader>
           <ProductImageUpload
@@ -130,8 +152,9 @@ function AdminProducts() {
               onSubmit={onSubmit}
               formData={formData}
               setFormData={setFormData}
-              buttonText={currentEditedId !== null ? 'Edit' : 'Add'}
+              buttonText={currentEditedId !== null ? "Edit" : "Add"}
               formControls={addProductFormElements}
+              isBtnDisabled={!isFormValid()}
             />
           </div>
         </SheetContent>
