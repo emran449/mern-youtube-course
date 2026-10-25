@@ -4,6 +4,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const authRouter = require('./routes/auth/auth-routes');
 const adminProductRouter = require('./routes/admin/products-routes');
+const shopProductsRouter = require("./routes/shop/products-routes")
 
 mongoose.connect(`mongodb+srv://emran:emran@cluster0.5cwfigw.mongodb.net/`)
 .then(() => console.log('Connected to MongoDB'))
@@ -30,6 +31,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use('/api/auth', authRouter);
 app.use('/api/admin/products', adminProductRouter);
+app.use("/api/shop/products", shopProductsRouter);
 
 
 app.listen(PORT, () => {
