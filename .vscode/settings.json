@@ -1,0 +1,5 @@
+{
+  "cSpell.words": ["njsproj", "ntvs"],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+}
